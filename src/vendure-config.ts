@@ -18,14 +18,21 @@ import { createManualPaymentHandler } from "./plugins/manual-payment/services/ma
 import { GstTaxesPlugin } from "./plugins/gst-taxes/gst-taxes.plugin";
 import { DashboardPlugin } from "@vendure/dashboard/plugin";
 const IS_DEV = process.env.APP_ENV === "dev";
-const serverPort = +process.env.PORT || 3000;
+const API_HOST = process.env.VENDURE_API_HOST || `http://localhost:3000`;
+const STOREFRONT_HOST =
+  process.env.VENDURE_STOREFRONT_HOST || "http://localhost:8080";
+const ALLOWED_HOSTS = process.env.ALLOWED_HOSTS || [];
 
 export const config: VendureConfig = {
   apiOptions: {
-    port: serverPort,
+    port: parseInt(API_HOST.split(":")[1]),
     adminApiPath: "admin-api",
     shopApiPath: "shop-api",
     trustProxy: IS_DEV ? false : 1,
+    cors: {
+      origin: ALLOWED_HOSTS,
+      credentials: true,
+    },
     // The following options are useful in development mode,
     // but are best turned off for production for security
     // reasons.
@@ -73,7 +80,7 @@ export const config: VendureConfig = {
       // For local dev, the correct value for assetUrlPrefix should
       // be guessed correctly, but for production it will usually need
       // to be set manually to match your production url.
-      assetUrlPrefix: IS_DEV ? undefined : "http://127.0.0.1:3000/assets/",
+      assetUrlPrefix: IS_DEV ? undefined : `${API_HOST}/assets/`,
     }),
     DefaultSchedulerPlugin.init(),
     DefaultJobQueuePlugin.init({ useDatabaseForBuffer: true }),
@@ -82,17 +89,16 @@ export const config: VendureConfig = {
       route: "mailbox",
       handlers: defaultEmailHandlers,
       templateLoader: new FileBasedTemplateLoader(
-        path.join(__dirname, "../static/email/templates"),
+        path.join(__dirname, "../static/email/templates")
       ),
       globalTemplateVars: {
         globalTemplateVars: {
           // The following variables will change depending on your storefront implementation.
           // Here we are assuming a storefront running at http://localhost:8080.
           fromAddress: '"noreply" <noreply@shreshtasmg.in>',
-          verifyEmailAddressUrl: "http://localhost:8080/verify",
-          passwordResetUrl: "http://localhost:8080/password-reset",
-          changeEmailAddressUrl:
-            "http://localhost:8080/verify-email-address-change",
+          verifyEmailAddressUrl: `${STOREFRONT_HOST}/verify`,
+          passwordResetUrl: `${STOREFRONT_HOST}/password-reset`,
+          changeEmailAddressUrl: `${STOREFRONT_HOST}/verify-email-address-change`,
         },
       },
 
@@ -116,9 +122,7 @@ export const config: VendureConfig = {
             },
           }),
     }),
-    DashboardPlugin.init({
-      route: "dashboard",
-    }),
+    DashboardPlugin,
     ManualPaymentPlugin.init({}),
     GstTaxesPlugin.init({}),
   ],

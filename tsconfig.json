@@ -19,8 +19,7 @@
     "migration.ts",
     "src/plugins/**/ui/*",
     "src/plugins/**/dashboard/*",
-    "admin-ui",
-    "vite.*.*ts"
+    "admin-ui"
   ],
   "ts-node": {
     "files": true
