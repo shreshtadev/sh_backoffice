@@ -14,12 +14,8 @@ import {
 import { GraphiqlPlugin } from "@vendure/graphiql-plugin";
 import "dotenv/config";
 import { DashboardPlugin } from "@vendure/dashboard/plugin";
-import {
-  defaultVendureComplexityEstimator,
-  HardenPlugin,
-  type HardenPluginOptions,
-} from "@vendure/harden-plugin";
-import path from "path";
+import { HardenPlugin, type HardenPluginOptions } from "@vendure/harden-plugin";
+import path from "node:path";
 import { GstTaxesPlugin } from "./plugins/gst-taxes/gst-taxes.plugin";
 import { ManualPaymentPlugin } from "./plugins/manual-payment/manual-payment.plugin";
 import { createManualPaymentHandler } from "./plugins/manual-payment/services/manual-payment-handler";
