@@ -19,7 +19,7 @@ declare global {
       SMTP_PORT: number;
       VENDURE_API_HOST: string;
       VENDURE_STOREFRONT_HOST: string;
-      ALLOWED_HOSTS: string[];
+      ALLOWED_HOSTS: string;
     }
   }
 }

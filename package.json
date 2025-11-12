@@ -25,6 +25,7 @@
     "@vendure/dashboard": "^3.5.0",
     "@vendure/email-plugin": "^3.5.0",
     "@vendure/graphiql-plugin": "^3.5.0",
+    "@vendure/harden-plugin": "^3.5.0",
     "dotenv": "17.2.3",
     "graphql-tag": "^2.12.6",
     "mysql": "2.18.1",

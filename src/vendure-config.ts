@@ -1,31 +1,55 @@
+import { AssetServerPlugin } from "@vendure/asset-server-plugin";
 import {
   DefaultJobQueuePlugin,
   DefaultSchedulerPlugin,
   DefaultSearchPlugin,
-  VendureConfig,
+  UuidIdStrategy,
+  type VendureConfig,
 } from "@vendure/core";
 import {
   defaultEmailHandlers,
   EmailPlugin,
   FileBasedTemplateLoader,
 } from "@vendure/email-plugin";
-import { AssetServerPlugin } from "@vendure/asset-server-plugin";
 import { GraphiqlPlugin } from "@vendure/graphiql-plugin";
 import "dotenv/config";
+import { DashboardPlugin } from "@vendure/dashboard/plugin";
+import {
+  defaultVendureComplexityEstimator,
+  HardenPlugin,
+  type HardenPluginOptions,
+} from "@vendure/harden-plugin";
 import path from "path";
+import { GstTaxesPlugin } from "./plugins/gst-taxes/gst-taxes.plugin";
 import { ManualPaymentPlugin } from "./plugins/manual-payment/manual-payment.plugin";
 import { createManualPaymentHandler } from "./plugins/manual-payment/services/manual-payment-handler";
-import { GstTaxesPlugin } from "./plugins/gst-taxes/gst-taxes.plugin";
-import { DashboardPlugin } from "@vendure/dashboard/plugin";
+
 const IS_DEV = process.env.APP_ENV === "dev";
 const API_HOST = process.env.VENDURE_API_HOST || `http://localhost:3000`;
 const STOREFRONT_HOST =
   process.env.VENDURE_STOREFRONT_HOST || "http://localhost:8080";
-const ALLOWED_HOSTS = process.env.ALLOWED_HOSTS || [];
+const ALLOWED_HOSTS = IS_DEV
+  ? "*"
+  : (process.env.ALLOWED_HOSTS || "").split(",");
 
+const hardenOptions: HardenPluginOptions = {
+  // Primary limits
+  maxQueryComplexity: 1000, // baseline production value (tune later)
+  // Enable complexity logging during tuning; set to false in steady-state prod
+  logComplexityScore: IS_DEV, // true in dev/staging; false in production by default
+
+  // Hide GraphQL field suggestions (prevents schema enum/field probing)
+  hideFieldSuggestions: true,
+
+  // 'prod' disables introspection and playground; 'dev' leaves them enabled
+  apiMode: IS_DEV ? "dev" : "prod",
+};
 export const config: VendureConfig = {
+  entityOptions: {
+    entityIdStrategy: new UuidIdStrategy(),
+  },
   apiOptions: {
-    port: parseInt(API_HOST.split(":")[1]),
+    port: parseInt(API_HOST.split(":")[2], 10),
     adminApiPath: "admin-api",
     shopApiPath: "shop-api",
     trustProxy: IS_DEV ? false : 1,
@@ -73,6 +97,7 @@ export const config: VendureConfig = {
   // need to be updated. See the "Migrations" section in README.md.
   customFields: {},
   plugins: [
+    HardenPlugin.init(hardenOptions),
     GraphiqlPlugin.init(),
     AssetServerPlugin.init({
       route: "assets",
@@ -89,7 +114,7 @@ export const config: VendureConfig = {
       route: "mailbox",
       handlers: defaultEmailHandlers,
       templateLoader: new FileBasedTemplateLoader(
-        path.join(__dirname, "../static/email/templates")
+        path.join(__dirname, "../static/email/templates"),
       ),
       globalTemplateVars: {
         globalTemplateVars: {
@@ -112,13 +137,13 @@ export const config: VendureConfig = {
         : {
             // ⚠️ IMPORTANT: Replace with your actual production SMTP details ⚠️
             transport: {
-              type: "smtp",
-              host: process.env.SMTP_HOST || "smtp.your-provider.com",
-              port: +process.env.SMTP_PORT || 587,
-              auth: {
-                user: process.env.SMTP_USER,
-                pass: process.env.SMTP_PASSWORD,
-              },
+              type: "none",
+              // host: process.env.SMTP_HOST || "smtp.your-provider.com",
+              // port: +process.env.SMTP_PORT || 587,
+              // auth: {
+              //   user: process.env.SMTP_USER,
+              //   pass: process.env.SMTP_PASSWORD,
+              // },
             },
           }),
     }),
