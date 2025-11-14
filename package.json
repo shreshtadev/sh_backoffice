@@ -8,8 +8,7 @@
     "dev": "concurrently npm:dev:*",
     "clean": "rimraf dist admin-ui build",
     "build:server": "tsc",
-    "build:admin": "ts-node compile-admin-ui.ts",
-    "build": "pnpm run clean && pnpm run build:server && pnpm run copy-static && pnpm run build:admin",
+    "build": "pnpm run clean && pnpm run build:server && pnpm run copy-static",
     "start-prod": "pnpm run clean && pnpm run build && pnpm run start",
     "start:server": "APP_ENV=prod node ./dist/src/index.js",
     "start:worker": "APP_ENV=prod node ./dist/src/index-worker.js",
@@ -28,6 +27,7 @@
     "@vendure/harden-plugin": "^3.5.0",
     "dotenv": "17.2.3",
     "graphql-tag": "^2.12.6",
+    "ioredis": "^5.8.2",
     "mysql": "2.18.1",
     "qrcode": "^1.5.4"
   },

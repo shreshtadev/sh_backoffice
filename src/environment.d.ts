@@ -20,6 +20,8 @@ declare global {
       VENDURE_API_HOST: string;
       VENDURE_STOREFRONT_HOST: string;
       ALLOWED_HOSTS: string;
+      REDIS_HOST: string;
+      REDIS_PORT: number;
     }
   }
 }

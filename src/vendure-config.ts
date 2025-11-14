@@ -1,8 +1,10 @@
 import { AssetServerPlugin } from "@vendure/asset-server-plugin";
 import {
+  AutoIncrementIdStrategy,
   DefaultJobQueuePlugin,
   DefaultSchedulerPlugin,
   DefaultSearchPlugin,
+  RedisCachePlugin,
   UuidIdStrategy,
   type VendureConfig,
 } from "@vendure/core";
@@ -13,9 +15,9 @@ import {
 } from "@vendure/email-plugin";
 import { GraphiqlPlugin } from "@vendure/graphiql-plugin";
 import "dotenv/config";
+import path from "node:path";
 import { DashboardPlugin } from "@vendure/dashboard/plugin";
 import { HardenPlugin, type HardenPluginOptions } from "@vendure/harden-plugin";
-import path from "node:path";
 import { GstTaxesPlugin } from "./plugins/gst-taxes/gst-taxes.plugin";
 import { ManualPaymentPlugin } from "./plugins/manual-payment/manual-payment.plugin";
 import { createManualPaymentHandler } from "./plugins/manual-payment/services/manual-payment-handler";
@@ -35,14 +37,16 @@ const hardenOptions: HardenPluginOptions = {
   logComplexityScore: IS_DEV, // true in dev/staging; false in production by default
 
   // Hide GraphQL field suggestions (prevents schema enum/field probing)
-  hideFieldSuggestions: true,
+  hideFieldSuggestions: !IS_DEV,
 
   // 'prod' disables introspection and playground; 'dev' leaves them enabled
   apiMode: IS_DEV ? "dev" : "prod",
 };
-export const config: VendureConfig = {
+const config: VendureConfig = {
   entityOptions: {
-    entityIdStrategy: new UuidIdStrategy(),
+    entityIdStrategy: IS_DEV
+      ? new AutoIncrementIdStrategy()
+      : new UuidIdStrategy(),
   },
   apiOptions: {
     port: parseInt(API_HOST.split(":")[2], 10),
@@ -148,3 +152,17 @@ export const config: VendureConfig = {
     GstTaxesPlugin.init({}),
   ],
 };
+
+if (!IS_DEV) {
+  config.plugins?.push(
+    RedisCachePlugin.init({
+      redisOptions: {
+        host: process.env.REDIS_HOST || "localhost",
+        port: +process.env.REDIS_PORT || 6379,
+        socketTimeout: 30000,
+      },
+    }),
+  );
+}
+
+export { config };
