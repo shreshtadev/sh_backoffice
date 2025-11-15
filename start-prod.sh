@@ -28,7 +28,19 @@ done < "$ENV_FILE"
 # 3. Explicitly set APP_ENV to 'prod' to ensure the correct mode is loaded
 # This will override the value in .env if it was set to 'dev'
 export APP_ENV="prod"
-# 4. Run the production build startup script
-pnpm run start-prod
+# 4. Run the production build
+echo "Building for production..."
+npm run clean && npm run build
 
-echo "✨ Vendure production processes stopped."
+if [ $? -ne 0 ]; then
+  echo "🚨 Build failed. Aborting."
+  exit 1
+fi
+
+# 5. Start the server and worker with pm2
+echo "Starting server and worker with pm2..."
+pm2 start npm --name "vendure-server" -- run start:server
+pm2 start npm --name "vendure-worker" -- run start:worker
+
+echo "✨ Vendure production processes started with pm2."
+echo "Use 'pm2 list' to see the status and 'pm2 logs' to see the logs."
