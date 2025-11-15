@@ -26,13 +26,11 @@ const IS_DEV = process.env.APP_ENV === "dev";
 const API_HOST = process.env.VENDURE_API_HOST || `http://localhost:3000`;
 const STOREFRONT_HOST =
   process.env.VENDURE_STOREFRONT_HOST || "http://localhost:8080";
-const ALLOWED_HOSTS = IS_DEV
-  ? "*"
-  : (process.env.ALLOWED_HOSTS || "").split(",");
+const ALLOWED_HOSTS = (process.env.ALLOWED_HOSTS || "").split(",");
 
 const hardenOptions: HardenPluginOptions = {
   // Primary limits
-  maxQueryComplexity: 1000, // baseline production value (tune later)
+  maxQueryComplexity: 5000, // baseline production value (tune later)
   // Enable complexity logging during tuning; set to false in steady-state prod
   logComplexityScore: IS_DEV, // true in dev/staging; false in production by default
 

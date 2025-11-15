@@ -10,8 +10,8 @@
     "build:server": "tsc",
     "build": "pnpm run clean && pnpm run build:server && pnpm run copy-static",
     "start-prod": "pnpm run clean && pnpm run build && pnpm run start",
-    "start:server": "APP_ENV=prod node ./dist/src/index.js",
-    "start:worker": "APP_ENV=prod node ./dist/src/index-worker.js",
+    "start:server": "APP_ENV=prod node --max-old-space-size=600 ./dist/src/index.js",
+    "start:worker": "APP_ENV=prod node --max-old-space-size=600 ./dist/src/index-worker.js",
     "start": "concurrently npm:start:*",
     "codegen": "graphql-codegen --config codegen.ts",
     "copy-static": "rsync -a static/ dist/static/"
