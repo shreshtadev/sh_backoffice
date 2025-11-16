@@ -18,6 +18,7 @@ declare global {
       SMTP_HOST: string;
       SMTP_PORT: number;
       VENDURE_API_HOST: string;
+      VENDURE_ASSET_HOST: string;
       VENDURE_STOREFRONT_HOST: string;
       ALLOWED_HOSTS: string;
       REDIS_HOST: string;

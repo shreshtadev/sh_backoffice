@@ -24,6 +24,7 @@ import { createManualPaymentHandler } from "./plugins/manual-payment/services/ma
 
 const IS_DEV = process.env.APP_ENV === "dev";
 const API_HOST = process.env.VENDURE_API_HOST || `http://localhost:3000`;
+const ASSET_HOST = process.env.VENDURE_ASSET_HOST || `http://localhost:3000`;
 const STOREFRONT_HOST =
   process.env.VENDURE_STOREFRONT_HOST || "http://localhost:8080";
 const ALLOWED_HOSTS = (process.env.ALLOWED_HOSTS || "").split(",");
@@ -103,7 +104,7 @@ const config: VendureConfig = {
       // For local dev, the correct value for assetUrlPrefix should
       // be guessed correctly, but for production it will usually need
       // to be set manually to match your production url.
-      assetUrlPrefix: IS_DEV ? undefined : `${API_HOST}/assets/`,
+      assetUrlPrefix: IS_DEV ? undefined : `${ASSET_HOST}/assets/`,
     }),
     DefaultSchedulerPlugin.init(),
     DefaultJobQueuePlugin.init({ useDatabaseForBuffer: true }),
