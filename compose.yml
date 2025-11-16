@@ -1,0 +1,27 @@
+services:
+  # 1. Vendure Application Service
+  # This service builds your Vendure image using the Dockerfile provided
+  vendure:
+    # Instructs Docker Compose to build the image from the current directory (using your Dockerfile)
+    build: .
+    # Map container port 3000 to host port 3000 (access via http://localhost:3000)
+    ports:
+      - "3000:3000"
+
+    # IMPORTANT: The 'extra_hosts' section is necessary on Linux systems
+    # if 'host.docker.internal' is not automatically resolved,
+    # but for simplicity, we will rely on Docker Desktop's default 'host.docker.internal'
+    # and load the environment variables directly.
+
+    # Load environment variables from the .env.production file.
+    # This ensures the DB_HOST=host.docker.internal setting is used,
+    # directing the container traffic back to the host machine.
+    env_file:
+      - .env
+
+    # Note: We removed 'depends_on' and 'db' service since the database is external.
+    restart: always
+# 2. Named Volumes (Removed, as no local database persistence is needed)
+
+# The Vendure service will now look for the database on 'host.docker.internal:3306'
+# as defined in your .env.production file.
