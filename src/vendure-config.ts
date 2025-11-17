@@ -23,7 +23,6 @@ import { ManualPaymentPlugin } from "./plugins/manual-payment/manual-payment.plu
 import { createManualPaymentHandler } from "./plugins/manual-payment/services/manual-payment-handler";
 
 const IS_DEV = process.env.APP_ENV === "dev";
-const API_HOST = process.env.VENDURE_API_HOST || `http://localhost:3000`;
 const ASSET_HOST = process.env.VENDURE_ASSET_HOST || `http://localhost:3000`;
 const STOREFRONT_HOST =
   process.env.VENDURE_STOREFRONT_HOST || "http://localhost:8080";
@@ -48,7 +47,7 @@ const config: VendureConfig = {
       : new UuidIdStrategy(),
   },
   apiOptions: {
-    port: parseInt(API_HOST.split(":")[2], 10),
+    port: IS_DEV ? 3000 : 443,
     adminApiPath: "admin-api",
     shopApiPath: "shop-api",
     trustProxy: IS_DEV ? false : 1,
