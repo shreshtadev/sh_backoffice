@@ -15,7 +15,7 @@ import {
 } from "@vendure/email-plugin";
 import { GraphiqlPlugin } from "@vendure/graphiql-plugin";
 import "dotenv/config";
-import path from "node:path";
+import path, { join } from "node:path";
 import { DashboardPlugin } from "@vendure/dashboard/plugin";
 import { HardenPlugin, type HardenPluginOptions } from "@vendure/harden-plugin";
 import { GstTaxesPlugin } from "./plugins/gst-taxes/gst-taxes.plugin";
@@ -112,7 +112,7 @@ const config: VendureConfig = {
       route: "mailbox",
       handlers: defaultEmailHandlers,
       templateLoader: new FileBasedTemplateLoader(
-        path.join(__dirname, "../static/email/templates"),
+        path.join(__dirname, "../static/email/templates")
       ),
       globalTemplateVars: {
         globalTemplateVars: {
@@ -145,7 +145,11 @@ const config: VendureConfig = {
             },
           }),
     }),
-    DashboardPlugin,
+    DashboardPlugin.init({
+      route: "dashboard",
+      appDir: join(__dirname, "../dashboard/dist"),
+      viteDevServerPort: 5173,
+    }),
     ManualPaymentPlugin.init({}),
     GstTaxesPlugin.init({}),
   ],
@@ -159,7 +163,7 @@ if (!IS_DEV) {
         port: +process.env.REDIS_PORT || 6379,
         socketTimeout: 30000,
       },
-    }),
+    })
   );
 }
 
