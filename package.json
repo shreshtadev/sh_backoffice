@@ -5,6 +5,7 @@
   "scripts": {
     "dev:server": "ts-node ./src/index.ts",
     "dev:worker": "ts-node ./src/index-worker.ts",
+    "migration:run": "ts-node ./scripts/initial-setup.ts",
     "dev": "concurrently npm:dev:*",
     "clean": "rimraf dist admin-ui build",
     "build:server": "tsc",
