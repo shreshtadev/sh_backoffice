@@ -7,8 +7,6 @@ import { config } from "../src/vendure-config"; // Adjust path to your vendure-c
 const initialDataPath = require.resolve(
   "@vendure/create/assets/initial-data.json",
 );
-const productsCsvPath = require.resolve("@vendure/create/assets/products.csv");
-const importAssetsDir = path.join(path.dirname(productsCsvPath), "images");
 
 // Ensure synchronize is set to true for this script run
 const populateConfig = {
@@ -17,16 +15,9 @@ const populateConfig = {
     ...config.dbConnectionOptions,
     synchronize: true, // This creates the tables on run
   },
-  importExportOptions: {
-    importAssetsDir: importAssetsDir,
-  },
 };
 
-populate(
-  () => bootstrap(populateConfig),
-  require(initialDataPath),
-  productsCsvPath,
-)
+populate(() => bootstrap(populateConfig), require(initialDataPath))
   .then((app) => {
     console.log("Database schema created and populated with initial data!");
     return app.close();
