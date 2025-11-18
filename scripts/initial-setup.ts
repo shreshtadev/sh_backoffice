@@ -11,4 +11,6 @@ const populateConfig = {
   },
 };
 
-populate(() => bootstrap(populateConfig), {});
+populate(() => bootstrap(populateConfig), {})
+  .then((_) => console.log("Completed migrating tables"))
+  .catch((_) => console.log("Unable to migrate"));
