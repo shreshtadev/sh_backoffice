@@ -47,7 +47,7 @@ const config: VendureConfig = {
       : new UuidIdStrategy(),
   },
   apiOptions: {
-    port: IS_DEV ? 3000 : 443,
+    port: 3000,
     adminApiPath: "admin-api",
     shopApiPath: "shop-api",
     trustProxy: IS_DEV ? false : 1,
