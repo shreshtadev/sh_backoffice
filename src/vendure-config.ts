@@ -15,7 +15,7 @@ import {
 } from "@vendure/email-plugin";
 import { GraphiqlPlugin } from "@vendure/graphiql-plugin";
 import "dotenv/config";
-import path, { join } from "node:path";
+import path from "node:path";
 import { DashboardPlugin } from "@vendure/dashboard/plugin";
 import { HardenPlugin, type HardenPluginOptions } from "@vendure/harden-plugin";
 import { GstTaxesPlugin } from "./plugins/gst-taxes/gst-taxes.plugin";
@@ -145,11 +145,7 @@ const config: VendureConfig = {
             },
           }),
     }),
-    DashboardPlugin.init({
-      route: "dashboard",
-      appDir: join(__dirname, "../dashboard/dist"),
-      viteDevServerPort: 5173,
-    }),
+    DashboardPlugin,
     ManualPaymentPlugin.init({}),
     GstTaxesPlugin.init({}),
   ],
