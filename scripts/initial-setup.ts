@@ -12,5 +12,12 @@ const populateConfig = {
 };
 
 populate(() => bootstrap(populateConfig), {})
-  .then((_) => console.log("Completed migrating tables"))
-  .catch((_) => console.log("Unable to migrate"));
+  .then((app) => {
+    console.log("Database schema created and populated with initial data!");
+    return app.close();
+  })
+  .then(() => process.exit(0))
+  .catch((err) => {
+    console.error("Error during database population:", err);
+    process.exit(1);
+  });
