@@ -1,0 +1,98 @@
+{
+  "defaultLanguage": "en",
+  "defaultZone": "Asia",
+  "roles": [
+    {
+      "code": "administrator",
+      "description": "Administrator",
+      "permissions": [
+        "CreateCatalog",
+        "ReadCatalog",
+        "UpdateCatalog",
+        "DeleteCatalog",
+        "CreateSettings",
+        "ReadSettings",
+        "UpdateSettings",
+        "DeleteSettings",
+        "CreateCustomer",
+        "ReadCustomer",
+        "UpdateCustomer",
+        "DeleteCustomer",
+        "CreateCustomerGroup",
+        "ReadCustomerGroup",
+        "UpdateCustomerGroup",
+        "DeleteCustomerGroup",
+        "CreateOrder",
+        "ReadOrder",
+        "UpdateOrder",
+        "DeleteOrder",
+        "CreateSystem",
+        "ReadSystem",
+        "UpdateSystem",
+        "DeleteSystem"
+      ]
+    },
+    {
+      "code": "order-manager",
+      "description": "Order manager",
+      "permissions": [
+        "CreateOrder",
+        "ReadOrder",
+        "UpdateOrder",
+        "DeleteOrder",
+        "ReadCustomer",
+        "ReadPaymentMethod",
+        "ReadShippingMethod",
+        "ReadPromotion",
+        "ReadCountry",
+        "ReadZone"
+      ]
+    },
+    {
+      "code": "inventory-manager",
+      "description": "Inventory manager",
+      "permissions": [
+        "CreateCatalog",
+        "ReadCatalog",
+        "UpdateCatalog",
+        "DeleteCatalog",
+        "CreateTag",
+        "ReadTag",
+        "UpdateTag",
+        "DeleteTag",
+        "ReadCustomer"
+      ]
+    }
+  ],
+  "shippingMethods": [
+    {
+      "name": "Standard Shipping",
+      "price": 500
+    },
+    {
+      "name": "Express Shipping",
+      "price": 1000
+    }
+  ],
+  "paymentMethods": [
+    {
+      "name": "Standard Payment",
+      "handler": {
+        "code": "manual-bank-transfer",
+        "arguments": [
+          {
+            "name": "automaticSettle",
+            "value": "false"
+          }
+        ]
+      }
+    }
+  ],
+  "countries": [
+    {
+      "name": "India",
+      "code": "IN",
+      "zone": "Asia"
+    }
+  ]
+}
