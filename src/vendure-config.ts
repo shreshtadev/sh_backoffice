@@ -60,9 +60,9 @@ const config: VendureConfig = {
     // reasons.
     ...(IS_DEV
       ? {
-          adminApiDebug: true,
-          shopApiDebug: true,
-        }
+        adminApiDebug: true,
+        shopApiDebug: true,
+      }
       : {}),
   },
   authOptions: {
@@ -95,7 +95,6 @@ const config: VendureConfig = {
   // need to be updated. See the "Migrations" section in README.md.
   customFields: {},
   plugins: [
-    HardenPlugin.init(hardenOptions),
     GraphiqlPlugin.init(),
     AssetServerPlugin.init({
       route: "assets",
@@ -129,21 +128,21 @@ const config: VendureConfig = {
       // In production (IS_DEV is false), use a real SMTP transport.
       ...(IS_DEV
         ? {
-            devMode: true,
-            outputPath: path.join(__dirname, "../static/email/test-emails"),
-          }
+          devMode: true,
+          outputPath: path.join(__dirname, "../static/email/test-emails"),
+        }
         : {
-            // ⚠️ IMPORTANT: Replace with your actual production SMTP details ⚠️
-            transport: {
-              type: "none",
-              // host: process.env.SMTP_HOST || "smtp.your-provider.com",
-              // port: +process.env.SMTP_PORT || 587,
-              // auth: {
-              //   user: process.env.SMTP_USER,
-              //   pass: process.env.SMTP_PASSWORD,
-              // },
-            },
-          }),
+          // ⚠️ IMPORTANT: Replace with your actual production SMTP details ⚠️
+          transport: {
+            type: "none",
+            // host: process.env.SMTP_HOST || "smtp.your-provider.com",
+            // port: +process.env.SMTP_PORT || 587,
+            // auth: {
+            //   user: process.env.SMTP_USER,
+            //   pass: process.env.SMTP_PASSWORD,
+            // },
+          },
+        }),
     }),
     DashboardPlugin,
     ManualPaymentPlugin.init({}),
@@ -161,6 +160,7 @@ if (!IS_DEV) {
       },
     })
   );
+  config.plugins?.push(HardenPlugin.init(hardenOptions));
 }
 
 export { config };

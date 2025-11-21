@@ -61,9 +61,10 @@ const hsnSacField: CustomFieldConfig = {
 })
 export class GstTaxesPlugin {
   static options: PluginInitOptions;
+  public _isInitialized = false;
 
   static init(options: PluginInitOptions): Type<GstTaxesPlugin> {
-    this.options = options;
+    GstTaxesPlugin.options = options;
     return GstTaxesPlugin;
   }
 }

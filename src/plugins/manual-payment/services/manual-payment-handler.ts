@@ -1,32 +1,40 @@
-import { RequestContext } from "@vendure/core";
 import {
-  PaymentMethodHandler,
-  CreatePaymentResult,
-  SettlePaymentResult,
-  CancelPaymentResult,
-  CancelPaymentErrorResult,
-  SettlePaymentErrorResult,
-  CreatePaymentErrorResult,
+  type CancelPaymentErrorResult,
+  type CancelPaymentResult,
+  type CreatePaymentErrorResult,
+  type CreatePaymentResult,
   LanguageCode,
+  type PaymentMethod,
+  PaymentMethodHandler,
+  type RequestContext,
+  type SettlePaymentErrorResult,
+  type SettlePaymentResult,
 } from "@vendure/core";
-import { ManualPaymentConfig } from "../entities/manual-payment-config.entity";
 import { ManualPaymentConfigService } from "./manual-payment-config.service";
 
 /**
  * Helper to render instructions string
  */
-function buildInstructions(cfg?: Partial<ManualPaymentConfig>): string {
-  if (!cfg) return "";
+function buildInstructions(cfg?: Partial<PaymentMethod>): string {
+  if (!cfg || !cfg.customFields) return "";
   const parts: string[] = [];
-  if (cfg.accountName) parts.push(`Account name: ${cfg.accountName}`);
-  if (cfg.accountNumber) parts.push(`Account number: ${cfg.accountNumber}`);
-  if (cfg.bankName) parts.push(`Bank: ${cfg.bankName}`);
-  if (cfg.ifsc) parts.push(`IFSC: ${cfg.ifsc}`);
-  if (cfg.upiId) parts.push(`UPI ID: ${cfg.upiId}`);
-  if (cfg.phone) parts.push(`Contact phone: ${cfg.phone}`);
-  if (cfg.instructionsExtra) parts.push(cfg.instructionsExtra);
+  if (cfg.customFields.accountName)
+    parts.push(`Account name: ${cfg.customFields.accountName}`);
+  if (cfg.customFields.accountNumber)
+    parts.push(`Account number: ${cfg.customFields.accountNumber}`);
+  if (cfg.customFields.bankName)
+    parts.push(`Bank: ${cfg.customFields.bankName}`);
+  if (cfg.customFields.branchName)
+    parts.push(`Branch: ${cfg.customFields.branchName}`);
+  if (cfg.customFields.ifscCode)
+    parts.push(`IFSC: ${cfg.customFields.ifscCode}`);
+  if (cfg.customFields.upiId) parts.push(`UPI ID: ${cfg.customFields.upiId}`);
+  if (cfg.customFields.contactNumber)
+    parts.push(`Contact phone: ${cfg.customFields.contactNumber}`);
+  if (cfg.customFields.extraInstructions)
+    parts.push(cfg.customFields.extraInstructions);
   parts.push(
-    "Please transfer the exact order amount and include your Order ID in the payment reference."
+    "Please transfer the exact order amount and include your Order ID in the payment reference.",
   );
   return parts.join("\n");
 }
@@ -67,16 +75,16 @@ export const createManualPaymentHandler: PaymentMethodHandler =
       amount,
       _args,
       _metadata,
-      method
+      method,
     ): Promise<CreatePaymentResult | CreatePaymentErrorResult> => {
       const svc = manualPaymentService;
-      const cfg = await svc.findByCode(ctx, method.handler.code);
+      const cfg = await svc.findByCode(ctx, method.code);
       const instructions = buildInstructions(cfg || {});
 
       // If disabled, return an error result
       if (!cfg || cfg.enabled === false) {
         return {
-          errorMessage: "Manual payment method is not enabled",
+          errorMessage: "Payment method is not enabled",
         } as CreatePaymentErrorResult;
       }
 
@@ -104,7 +112,7 @@ export const createManualPaymentHandler: PaymentMethodHandler =
       ctx,
       order,
       payment,
-      args
+      args,
     ): Promise<SettlePaymentResult | SettlePaymentErrorResult> => {
       // No external provider to call; the admin will trigger this once funds are confirmed.
       return { success: true };
@@ -117,7 +125,7 @@ export const createManualPaymentHandler: PaymentMethodHandler =
       ctx,
       order,
       payment,
-      args
+      args,
     ): Promise<CancelPaymentResult | CancelPaymentErrorResult> => {
       // No external cancellation possible; mark as cancelled in Vendure
       return { success: true };
